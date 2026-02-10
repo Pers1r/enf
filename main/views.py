@@ -18,7 +18,7 @@ class IndexView(TemplateView):
         context['current_category'] = None
         return context
 
-    def get(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         if request.headers.get('HX-Request'):
             return TemplateResponse(request, 'main/home_content.html', context)
@@ -33,11 +33,11 @@ class CatalogView(TemplateView):
         'color': lambda queryset, value: queryset.filter(color__iexact=value),
         'min_price': lambda queryset, value: queryset.filter(price_gte=value),
         'max_price': lambda queryset, value: queryset.filter(price_lte=value),
-        'size': lambda queryset, value: queryset.filter(product_size__size__name=value),
+        'size': lambda queryset, value: queryset.filter(product_sizes__size__name=value),
     }
 
     def get_context_data(self, **kwargs):
-        context = self.get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         category_slug = kwargs.get('category_slug')
         categories = Category.objects.all()
         products = Product.objects.all().order_by('-created_at')
@@ -73,9 +73,9 @@ class CatalogView(TemplateView):
             'search_query': query or '',
         })
 
-        if self.requst.GET.get['show_search'] == 'true':
+        if self.request.GET.get('show_search') == 'true':
             context['show_search'] = True
-        elif self.requst.GET.get['reset_search'] == 'true':
+        elif self.request.GET.get('reset_search') == 'true':
             context['reset_search'] = True
 
         return context
@@ -99,7 +99,7 @@ class ProductDetailView(DetailView):
     slug_url_kwarg = 'slug'
 
     def get_context_data(self, **kwargs):
-        context = super(ProductDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         product = self.get_object()
         context['categories'] = Category.objects.all()
         context['related_products'] = Product.objects.filter(
@@ -109,8 +109,8 @@ class ProductDetailView(DetailView):
         return context
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
         self.object = self.get_object()
+        context = self.get_context_data(**kwargs)
         if request.headers.get('HX-Request'):
             return TemplateResponse(request, 'main/product_detail.html', context)
         raise TemplateResponse(request, self.template_name, context)
