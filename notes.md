@@ -54,6 +54,37 @@ class Product(models.Model):
 ```
 That way we create ForeignKey for our model/class and set delete method.
 
+### What next ###
+
+After we created our models we need to register them in admin.py.
+To do it we create set of rules in class called NameOfOurModelAdmin and then register it in out admin panel.
+
+    class ProductAdmin(admin.ModelAdmin):
+        list_display = ['name', 'category', 'color', 'price']
+        list_filter = ['category', 'color']
+        search_fields = ['name', 'color', 'description']
+        prepopulated_fields = {'slug': ('name',)}
+        inlines = [ProductSizeInLine, ProductImageInLine]
+
+
+    class CategoryAdmin(admin.ModelAdmin):
+        list_display = ['name', 'slug']
+        prepopulated_fields = {'slug': ('name',)}
+    
+    
+    class SizeAdmin(admin.ModelAdmin):
+        list_display = ['name']
+    
+    
+    admin.site.register(Product, ProductAdmin)
+    admin.site.register(Categry, CategoryAdmin)
+    admin.site.register(Size, SizeAdmin)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# VIEWS #
+https://docs.djangoproject.com/en/6.0/topics/class-based-views/
+In this project we use class based views. 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # GENERAL NOTES #
