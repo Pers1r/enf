@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'cart',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -146,3 +147,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # SESSION COOKIE IS SAVED FOR 30 DAYS
 SESSION_COOKIE_AGE = 86400
 SESSION_SAVE_EVERY_REQUEST = True # additional, can be just "save" method in cart.py
+
+
+AUTH_USER_MODEL = 'users.CustomUser'
