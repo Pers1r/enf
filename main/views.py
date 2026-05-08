@@ -1,13 +1,10 @@
 from django.shortcuts import get_object_or_404
-from django.template import TemplateDoesNotExist
 from django.views.generic import TemplateView, DetailView
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from .models import Category, Product, Size
 from django.db.models import Q
 
-# We do dynamic html. It means that we don't load new html but change only content block.
-# Class based.
 
 class IndexView(TemplateView):
     template_name = 'main/base.html'
@@ -22,17 +19,16 @@ class IndexView(TemplateView):
         context = self.get_context_data(**kwargs)
         if request.headers.get('HX-Request'):
             return TemplateResponse(request, 'main/home_content.html', context)
-
         return TemplateResponse(request, self.template_name, context)
 
 
 class CatalogView(TemplateView):
-    template_name = 'main/base.html'
+    template = 'main/base.html'
 
     FILTER_MAPPING = {
         'color': lambda queryset, value: queryset.filter(color__iexact=value),
-        'min_price': lambda queryset, value: queryset.filter(price_gte=value),
-        'max_price': lambda queryset, value: queryset.filter(price_lte=value),
+        'min_price': lambda queryset, value: queryset.filter(price__gte=value),
+        'max_price': lambda queryset, value: queryset.filter(price__lte=value),
         'size': lambda queryset, value: queryset.filter(product_sizes__size__name=value),
     }
 
@@ -67,10 +63,10 @@ class CatalogView(TemplateView):
         context.update({
             'categories': categories,
             'products': products,
-            'current_category': current_category,
+            'current_category': category_slug,
             'filter_params': filter_params,
             'sizes': Size.objects.all(),
-            'search_query': query or '',
+            'search_query': query or ''
         })
 
         if self.request.GET.get('show_search') == 'true':
@@ -87,9 +83,9 @@ class CatalogView(TemplateView):
                 return TemplateResponse(request, 'main/search_input.html', context)
             elif context.get('reset_search'):
                 return TemplateResponse(request, 'main/search_button.html', {})
-            template = 'main/filter_modal.html' if request.GET.get('show_filter') =='true' else 'main/catalog.html'
+            template = 'main/filter_modal.html' if request.GET.get('show_filters') == 'true' else 'main/catalog.html'
             return TemplateResponse(request, template, context)
-        return TemplateResponse(request, self.template_name, context)
+        return TemplateResponse(request, self.template, context)
 
 
 class ProductDetailView(DetailView):
@@ -103,7 +99,7 @@ class ProductDetailView(DetailView):
         product = self.get_object()
         context['categories'] = Category.objects.all()
         context['related_products'] = Product.objects.filter(
-            category=product.category,
+            category=product.category
         ).exclude(id=product.id)[:4]
         context['current_category'] = product.category.slug
         return context
