@@ -170,8 +170,8 @@
 </style>
 
 <script>
-    let selectedSize = null;
-    let selectedSizeId = null;
+    var selectedSize = null;
+    var selectedSizeId = null;
 
     function changeMainImage(src) {
         const mainImg = document.querySelector('.aspect-square img');
@@ -324,7 +324,7 @@
     document.addEventListener('DOMContentLoaded', initializeSizeRadios);
     document.addEventListener('htmx:afterSwap', initializeSizeRadios);
 
-    const productCards = document.querySelectorAll('.product-card');
+    var productCards = document.querySelectorAll('.product-card');
     productCards.forEach(card => {
         card.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-2px)';

@@ -20,7 +20,7 @@ class CartMixin:
 
         cart, created = Cart.objects.get_or_create(session_key=request.session.session_key)
 
-        request.session['card_id'] = cart.id
+        request.session['cart_id'] = cart.id
         request.session.modified = True
         return cart
 

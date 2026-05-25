@@ -53,6 +53,9 @@
 </style>
 
 <script>
+    if (typeof window.updateHeaderCartCount === 'function') {
+        window.updateHeaderCartCount({{ cart.total_items|default:0 }});
+    }
     function openCart() {
         const modal = document.getElementById('cart-modal');
         const overlay = document.getElementById('cart-overlay');
