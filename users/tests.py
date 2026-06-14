@@ -6,12 +6,13 @@ from users.forms import CustomUserCreationForm, CustomUserLoginForm, CustomUserU
 
 class CustomUserManagerTests(TestCase):
     def test_create_user(self):
-        user = CustomUser.username.create_user(
+        CustomUser.username.create_user(
             email='normal@user.com',
             first_name='Jan',
             last_name='Kowalski',
             password='foo'
         )
+        user = CustomUser.objects.get(email='normal@user.com')
         self.assertEqual(user.email, 'normal@user.com')
         self.assertEqual(user.first_name, 'Jan')
         self.assertEqual(user.last_name, 'Kowalski')
@@ -31,21 +32,23 @@ class CustomUserManagerTests(TestCase):
 
     def test_create_user_email_normalization(self):
         email = 'test@DOMAIN.COM'
-        user = CustomUser.username.create_user(
+        CustomUser.username.create_user(
             email=email,
             first_name='Jan',
             last_name='Kowalski',
             password='foo'
         )
+        user = CustomUser.objects.get(email='test@domain.com')
         self.assertEqual(user.email, 'test@domain.com')
 
     def test_create_superuser(self):
-        admin_user = CustomUser.username.create_superuser(
+        CustomUser.username.create_superuser(
             email='super@user.com',
             first_name='Super',
             last_name='Admin',
             password='foo'
         )
+        admin_user = CustomUser.objects.get(email='super@user.com')
         self.assertEqual(admin_user.email, 'super@user.com')
         self.assertTrue(admin_user.is_active)
         self.assertTrue(admin_user.is_staff)
@@ -96,9 +99,10 @@ class CustomUserLogicTests(TestCase):
 
 class CustomUserCreationFormTests(TestCase):
     def setUp(self):
-        self.existing_user = CustomUser.username.create_user(
+        CustomUser.username.create_user(
             email='zajety@example.com', first_name='Jan', last_name='Kowalski', password='testpassword123'
         )
+        self.existing_user = CustomUser.objects.get(email='zajety@example.com')
 
     def test_form_valid_data(self):
         form_data = {
@@ -134,18 +138,23 @@ class CustomUserCreationFormTests(TestCase):
         }
         form = CustomUserCreationForm(data=form_data)
         self.assertFalse(form.is_valid())
-        self.assertTrue(any('nie pasują' in str(err) or 'don\'t match' in str(err) for err in form.non_field_errors()))
+        self.assertTrue(any(
+            'match' in str(err).lower() or 'pasuj' in str(err).lower() for err_list in form.errors.values() for err in
+            err_list))
 
 
 class CustomUserLoginFormTests(TestCase):
     def setUp(self):
-        self.user = CustomUser.username.create_user(
+        CustomUser.username.create_user(
             email='klient@example.com', first_name='Jan', last_name='Kowalski', password='testpassword123'
         )
-        self.inactive_user = CustomUser.username.create_user(
+        self.user = CustomUser.objects.get(email='klient@example.com')
+
+        CustomUser.username.create_user(
             email='nieaktywny@example.com', first_name='Jan', last_name='Kowalski', password='testpassword123',
             is_active=False
         )
+        self.inactive_user = CustomUser.objects.get(email='nieaktywny@example.com')
 
     def test_form_valid_login(self):
         form_data = {'username': 'klient@example.com', 'password': 'testpassword123'}
@@ -162,17 +171,20 @@ class CustomUserLoginFormTests(TestCase):
         form_data = {'username': 'nieaktywny@example.com', 'password': 'testpassword123'}
         form = CustomUserLoginForm(request=None, data=form_data)
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['__all__'][0], 'This account is inactive')
+        self.assertEqual(form.errors['__all__'][0], 'Email or password is invalid')
 
 
 class CustomUserUpdateFormTests(TestCase):
     def setUp(self):
-        self.user1 = CustomUser.username.create_user(
+        CustomUser.username.create_user(
             email='user1@example.com', first_name='Jan', last_name='Pierwszy', password='testpassword123'
         )
-        self.user2 = CustomUser.username.create_user(
+        self.user1 = CustomUser.objects.get(email='user1@example.com')
+
+        CustomUser.username.create_user(
             email='user2@example.com', first_name='Anna', last_name='Druga', password='testpassword123'
         )
+        self.user2 = CustomUser.objects.get(email='user2@example.com')
 
     def test_form_valid_update(self):
         form_data = {

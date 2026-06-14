@@ -8,12 +8,13 @@ from main.models import Category, Product, Size, ProductSize
 
 class OrderModelTests(TestCase):
     def setUp(self):
-        self.user = CustomUser.username.create_user(
+        CustomUser.username.create_user(
             email='klient@example.com',
             first_name='Jan',
             last_name='Kowalski',
             password='testpassword123'
         )
+        self.user = CustomUser.objects.get(email='klient@example.com')
 
         self.order = Order.objects.create(
             user=self.user,
@@ -33,12 +34,13 @@ class OrderModelTests(TestCase):
 
 class OrderItemModelTests(TestCase):
     def setUp(self):
-        self.user = CustomUser.username.create_user(
+        CustomUser.username.create_user(
             email='klient2@example.com',
             first_name='Anna',
             last_name='Nowak',
             password='testpassword123'
         )
+        self.user = CustomUser.objects.get(email='klient2@example.com')
 
         self.category = Category.objects.create(name='Ubrania')
 
@@ -84,7 +86,7 @@ class OrderItemModelTests(TestCase):
 
 class OrderFormTests(TestCase):
     def setUp(self):
-        self.user = CustomUser.username.create_user(
+        CustomUser.username.create_user(
             email='formularz@example.com',
             first_name='Piotr',
             last_name='Testowy',
@@ -94,6 +96,7 @@ class OrderFormTests(TestCase):
             city='Warszawa',
             postal_code='00-001'
         )
+        self.user = CustomUser.objects.get(email='formularz@example.com')
 
     def test_form_initialization_with_user(self):
         form = OrderForm(user=self.user)

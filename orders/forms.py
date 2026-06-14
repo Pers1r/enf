@@ -92,17 +92,17 @@ class OrderForm(forms.Form):
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         if user:
-            self.fields['first_name'].initial = user.first_name
-            self.fields['last_name'].initial = user.last_name
-            self.fields['email'].initial = user.email
-            self.fields['company'].initial = user.company
-            self.fields['address1'].initial = user.address1
-            self.fields['address2'].initial = user.address2
-            self.fields['city'].initial = user.city
-            self.fields['country'].initial = user.country
-            self.fields['province'].initial = user.province
-            self.fields['postal_code'].initial = user.postal_code
-            self.fields['phone'].initial = user.phone
+            self.initial['first_name'] = user.first_name
+            self.initial['last_name'] = user.last_name
+            self.initial['email'] = user.email
+            self.initial['company'] = user.company
+            self.initial['address1'] = user.address1
+            self.initial['address2'] = user.address2
+            self.initial['city'] = user.city
+            self.initial['country'] = user.country
+            self.initial['province'] = user.province
+            self.initial['postal_code'] = user.postal_code
+            self.initial['phone'] = user.phone
 
     def clean(self):
         cleaned_data = super().clean()

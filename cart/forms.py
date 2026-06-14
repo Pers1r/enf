@@ -1,4 +1,5 @@
 from django import forms
+from django.core.validators import MaxValueValidator
 from .models import CartItem
 
 
@@ -29,5 +30,5 @@ class UpdateCartItemForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.product_size:
             self.fields['quantity'].validators.append(
-                forms.validators.MaxValueValidator(self.instance.product_size.stock)
+                MaxValueValidator(self.instance.product_size.stock)
             )
