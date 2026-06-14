@@ -72,7 +72,7 @@
 #     def clear(self):
 #         del self.session["cart"]
 #         self.save()
-# 
+#
 #     def get_cart_items(self):
 #         items = []
 #
