@@ -1,8 +1,5 @@
 from django.test import TestCase
-
-# Create your tests here.
 from decimal import Decimal
-from django.test import TestCase
 from orders.models import Order, OrderItem
 from orders.forms import OrderForm
 from users.models import CustomUser
@@ -11,7 +8,7 @@ from main.models import Category, Product, Size, ProductSize
 
 class OrderModelTests(TestCase):
     def setUp(self):
-        self.user = CustomUser.objects.create_user(
+        self.user = CustomUser.username.create_user(
             email='klient@example.com',
             first_name='Jan',
             last_name='Kowalski',
@@ -36,7 +33,7 @@ class OrderModelTests(TestCase):
 
 class OrderItemModelTests(TestCase):
     def setUp(self):
-        self.user = CustomUser.objects.create_user(
+        self.user = CustomUser.username.create_user(
             email='klient2@example.com',
             first_name='Anna',
             last_name='Nowak',
@@ -87,7 +84,7 @@ class OrderItemModelTests(TestCase):
 
 class OrderFormTests(TestCase):
     def setUp(self):
-        self.user = CustomUser.objects.create_user(
+        self.user = CustomUser.username.create_user(
             email='formularz@example.com',
             first_name='Piotr',
             last_name='Testowy',
